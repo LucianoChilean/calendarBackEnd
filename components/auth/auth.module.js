@@ -1,0 +1,1 @@
+// modulo en donde se encuentra toda la logica del componente

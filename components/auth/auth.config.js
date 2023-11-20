@@ -1,0 +1,1 @@
+// Configuración para control de errores
