@@ -1,12 +1,18 @@
+// modulo en donde se encuentra toda la logica del componente
 const { response } = require('express');
 const bcrypt = require('bcryptjs');
-const Usuario = require('../models/Usuario');
-const { generarJWT } = require('../helpers/jwt');
+const Usuario = require('../../models/Usuario');
+const { generateJWT } = require('../../util/generateJwt');
+const httpContext = require('express-http-context')
+//* Modulo en donde esta toda la lógica de cada endpoint
  
-const crearUsuario = async(req, res = response ) => {
+const createUserModule = async() => {
 
-    const { email, password } = req.body;
+    const body = httpContext.get('BODY');
+    console.log(body)
 
+  console.log("MODULO");
+    return true;
     try {
         let usuario = await Usuario.findOne({ email });
 
@@ -27,7 +33,7 @@ const crearUsuario = async(req, res = response ) => {
         await usuario.save();
 
         // Generar JWT
-        const token = await generarJWT( usuario.id, usuario.name );
+        const token = await generateJWT( usuario.id, usuario.name );
 
         console.log(token)
     
@@ -48,7 +54,7 @@ const crearUsuario = async(req, res = response ) => {
 }
 
 
-const loginUsuario = async(req, res = response ) => {
+const loginUserModule = async(req, res = response ) => {
 
     const { email, password } = req.body;
 
@@ -74,7 +80,7 @@ const loginUsuario = async(req, res = response ) => {
         }
 
         // Generar JWT
-        const token = await generarJWT( usuario.id, usuario.name );
+        const token = await generateJWT( usuario.id, usuario.name );
 
         res.json({
             ok: true,
@@ -95,12 +101,12 @@ const loginUsuario = async(req, res = response ) => {
 }
 
 
-const revalidarToken = async (req, res = response ) => {
+const reValidateTokenModule = async (req, res = response ) => {
 
     const { uid, name } = req;
 
     // Generar JWT
-    const token = await generarJWT( uid, name );
+    const token = await generateJWT( uid, name );
 
     res.json({
         ok: true,
@@ -114,7 +120,7 @@ const revalidarToken = async (req, res = response ) => {
 
 
 module.exports = {
-    crearUsuario,
-    loginUsuario,
-    revalidarToken
+    createUserModule,
+    loginUserModule,
+    reValidateTokenModule
 }

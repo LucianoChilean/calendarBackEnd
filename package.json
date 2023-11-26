@@ -3,21 +3,29 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js"
+    "local": "nodemon src/index.js",
+    "start": "node src/index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Luciano Saavedra Mattensohn <mattensohn64@gmail.com>",
   "license": "ISC",
   "description": "",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "config": "^3.3.9",
     "cors": "^2.8.5",
+    "dayjs": "^1.11.10",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-http-context": "^1.2.4",
+    "express-sanitizer": "^1.0.6",
     "express-validator": "^6.5.0",
+    "helmet": "^7.1.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.26.0",
-    "mongoose": "^5.9.18"
+    "mongoose": "^5.9.18",
+    "morgan": "^1.10.0",
+    "pino": "^8.16.2",
+    "pino-pretty": "^10.2.3"
   }
 }
