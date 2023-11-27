@@ -2,20 +2,16 @@ const logger = require('../../util/logger');
 const { createUserController, 
     loginUserController, 
     reValidateTokenController } = require('./auth.controller');
-//const { setBody, getBody } = require('../../util/context-helper.util');
-const httpContext = require('express-http-context');
+const { setBody } = require('../../util/context-helper.util');
+
 
 
 // * Middleware (Para agregar validación particular por cada endpoint)
 const createUserMiddleware =  async (req, res) => {
 
     logger.info('[authMiddleware] Init middleware.');
-    console.log(req.body)
-    httpContext.set('BODY', req.body);
-   // setBody(req.body);
-   // const body = getBody();
-   // console.log(body);
-    await createUserController();
+    setBody(req.body);
+    const response = await createUserController();
     // Send response.
     logger.info('[authMiddleware] Send success response.');
     return res.status(200).send({ok:true});

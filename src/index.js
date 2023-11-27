@@ -1,4 +1,5 @@
 const express = require('express');
+const { middleware: contextMiddleware } = require('express-http-context');
 require('dotenv').config();
 const cors = require('cors');
 const { dbConnection } = require('../database/config');
@@ -8,16 +9,22 @@ const routes = require('./routes/routes');
 const logger = require('./util/logger');
 const config = require('./config/globals');
 const { default: helmet } = require('helmet');
-const httpContext = require('express-http-context');
 
-
-// Crear el servidor de express
+//Crear el servidor de express
 const app = express();
 
-const { configBase } = config();
-const { basepath, port  } = configBase;
+const { basepath, port  } = config;
 
 const serverStart = async () => {
+
+//Lectura y parseo del body
+app.use(express.json());
+//CONTEXT
+app.use(contextMiddleware);
+// CORS
+app.use(cors());
+// Request Sanitizer
+app.use(expressSanitizer());
 
 // Base de datos
 dbConnection();
@@ -42,24 +49,11 @@ app.use(helmet({
   })
   );
 
-// CORS
-app.use(cors());
-
-// Request Sanitizer
-app.use(expressSanitizer());
 
 // Directorio Público
 //app.use( express.static('public') );
-
-//CONTEXT
-app.use(httpContext.middleware);
-
-// Lectura y parseo del body
-app.use(express.json());
-
 // rutas
 app.use(basepath, routes);
-
 
 
 // Escuchar peticiones

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const logger = require('../src/util/logger');
 const config = require('../src/config/globals');
 
-const { configBD } = config();
+const { configBD } = config;
 
 const dbConnection = async() => {
 

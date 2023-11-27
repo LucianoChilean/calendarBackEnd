@@ -1,5 +1,5 @@
 const datetime = require('./datetime.util');
-
+const { set, get } = require('express-http-context');
 // all code from here on has access to the same context for each request
 
 
@@ -20,23 +20,24 @@ const CONTEXT_KEY = {
  * Set operation configuration to monitoring and add headers.(stage and operation)
  * @param { Object } config Configuration.(*.config.js)
  */
-//const setConfig = ({  }) => {
-//  const {  ...config } = operationConfig;
-//
-//  set(CONTEXT_KEY.CONFIG, {
-//    ...config,
-//  });
-//
-//  set(CONTEXT_KEY.DATA, {
-//    fechaInicio: datetime.now(),
-//  
-//    operation
-//  });
-//
-//  set(CONTEXT_KEY.HEADERS, {
-//   
-//  });
-//};
+const setConfig = ({ operationConfig, dictionary  }) => {
+  const {  stage, operation,...config } = operationConfig;
+
+  set(CONTEXT_KEY.CONFIG, {
+    ...config,
+    dictionary
+  });
+
+  set(CONTEXT_KEY.DATA, {
+    fechaInicio: datetime.now(),
+    stage,
+    operation
+  });
+
+  set(CONTEXT_KEY.HEADERS, {
+   
+  });
+};
 
 /**
  * Get operation configuration.
@@ -110,7 +111,6 @@ const getBody = () => get(CONTEXT_KEY.BODY);
  */
 const setBody = (body) => {
   set(CONTEXT_KEY.BODY, body);
-  console.log(get(CONTEXT_KEY.BODY));
 };
 
 /**
@@ -146,7 +146,7 @@ const addData = (data) => {
 const getData = () => get(CONTEXT_KEY.DATA);
 
 module.exports = {
- // setConfig,
+  setConfig,
   getConfig,
   getHeaders,
   getHeadersAndInclude,

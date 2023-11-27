@@ -3,27 +3,28 @@ const { response } = require('express');
 const bcrypt = require('bcryptjs');
 const Usuario = require('../../models/Usuario');
 const { generateJWT } = require('../../util/generateJwt');
-const httpContext = require('express-http-context')
+const { getBody } = require('../../util/context-helper.util');
+const logger = require('../../util/logger');
+
 //* Modulo en donde esta toda la lógica de cada endpoint
  
 const createUserModule = async() => {
 
-    const body = httpContext.get('BODY');
-    console.log(body)
-
-  console.log("MODULO");
-    return true;
+    logger.info('[createUserModule] Init Module.');
+    const body = getBody();
+    const { email, password } = body;
+   
     try {
         let usuario = await Usuario.findOne({ email });
 
         if ( usuario ) {
-            return res.status(400).json({
+            return {
                 ok: false,
                 msg: 'El usuario ya existe'
-            });
+            };
         }
 
-        usuario = new Usuario( req.body );
+        usuario = new Usuario( body );
     
         // Encriptar contraseña
         const salt = bcrypt.genSaltSync();
@@ -35,60 +36,65 @@ const createUserModule = async() => {
         // Generar JWT
         const token = await generateJWT( usuario.id, usuario.name );
 
-        console.log(token)
     
-        res.status(201).json({
-            ok: true,
-            uid: usuario.id,
-            name: usuario.name,
-            token
-        })
+        const response = {
+            payload: {
+                uid: usuario.id,
+                name: usuario.name,
+                token
+            }
+        };
+
+        return response;
         
     } catch (error) {
+        logger.error('[createUserModule] Error response.',error);
         console.log(error)
-        res.status(500).json({
-            ok: false,
-            msg: 'Por favor hable con el administrador'
-        });
+        throw new Error(error);
     }
 }
 
 
-const loginUserModule = async(req, res = response ) => {
+const loginUserModule = async() => {
 
-    const { email, password } = req.body;
+    logger.info('[loginUserModule] Init Module.');
+    const body = getBody();
+    const { email, password } = body;
 
     try {
         
         const usuario = await Usuario.findOne({ email });
 
         if ( !usuario ) {
-            return res.status(400).json({
+            return {
                 ok: false,
                 msg: 'El usuario no existe con ese email'
-            });
+            };
         }
 
         // Confirmar los passwords
         const validPassword = bcrypt.compareSync( password, usuario.password );
 
         if ( !validPassword ) {
-            return res.status(400).json({
+            return {
                 ok: false,
                 msg: 'Password incorrecto'
-            });
+            };
         }
 
         // Generar JWT
         const token = await generateJWT( usuario.id, usuario.name );
 
-        res.json({
+        const response = {
+            payload:{
             ok: true,
             uid: usuario.id,
             name: usuario.name,
             token
-        })
+            }
+        };
 
+        return response;
 
     } catch (error) {
         console.log(error);
@@ -108,12 +114,17 @@ const reValidateTokenModule = async (req, res = response ) => {
     // Generar JWT
     const token = await generateJWT( uid, name );
 
-    res.json({
-        ok: true,
-        uid,
-        name,
-        token
-    })
+    const response = {
+        payload:{
+            ok: true,
+            uid,
+            name,
+            token
+        }
+       
+    };
+
+    return response;
 }
 
 

@@ -1,15 +1,10 @@
 
-
-
-const config = () => {
- return {
-  configBase: { 
+const config = {
    basepath:  process.env.BASE_URL,
    port: process.env.PORT,
-  },
    headers:{
      token:'',
-     codigosesion:'',
+     hash:'',
    },
    configBD:{
      fullUrl: process.env.BD_LOCAL,
@@ -20,7 +15,6 @@ const config = () => {
    },
   jwt: process.env.SECRET_JWT_SEED,
   timezone: process.env.TIME_ZONE
-};
 }
 
 
